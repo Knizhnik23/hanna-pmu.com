@@ -281,6 +281,46 @@
     reveal.forEach(function (el) { ro.observe(el); });
   }
 
+  /* ---------- Kennzahlen zählen beim ersten Erscheinen hoch (9+, 10+, 1000+) ---------- */
+  var nums = $$(".stat__n");
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        co.unobserve(en.target);
+        var el = en.target, txt = el.textContent, m = txt.match(/^(\d+)(.*)$/);
+        if (!m) return;
+        var to = +m[1], rest = m[2], t0 = null, dur = to > 100 ? 1400 : 900;
+        function step(ts) {
+          if (t0 === null) t0 = ts;
+          var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+          el.textContent = (p < 1 ? Math.round(to * e) : to) + rest;
+          if (p < 1) requestAnimationFrame(step); else el.textContent = txt;
+        }
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.6 });
+    nums.forEach(function (n) { co.observe(n); });
+  }
+
+  /* ---------- Schwebender WhatsApp-Button: erst nach dem Hero, weg am Footer und bei offenem Menü ---------- */
+  var fab = $("[data-fab]");
+  if (fab) {
+    var heroEl = $(".hero"), footEl = $(".footer"), footVisible = false;
+    if ("IntersectionObserver" in window && footEl) {
+      new IntersectionObserver(function (en) { footVisible = en[0].isIntersecting; fabUpdate(); }).observe(footEl);
+    }
+    function fabUpdate() {
+      var past = heroEl ? heroEl.getBoundingClientRect().bottom < 0 : window.scrollY > 600;
+      var menuOpen = document.body.classList.contains("menu-open");
+      var modalOpen = !!$("[data-modal]:not([hidden])");
+      fab.classList.toggle("is-shown", past && !footVisible && !menuOpen && !modalOpen);
+    }
+    window.addEventListener("scroll", fabUpdate, { passive: true });
+    document.addEventListener("click", function () { setTimeout(fabUpdate, 300); });
+    fabUpdate();
+  }
+
   /* ---------- Start ---------- */
   if (lang !== "de") applyLang(lang); else updateLinks();
   requestAnimationFrame(function () { document.body.classList.add("is-loaded"); });

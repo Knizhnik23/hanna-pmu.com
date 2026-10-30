@@ -41,17 +41,20 @@ const head = (num, ebKey, titleKey, subKey, theme = "dark") =>
 const tag = (labelKey, num = "") =>
   `<span class="tag">${num ? `<span class="tag__num">${num}</span>` : ""}${T("span", labelKey)}</span>`;
 
+/* ---------- hero: Punkte + Linien zu den Tags (Koordinaten aus Figma, werden nacheinander eingezeichnet) ---------- */
+const HERO_LINES = `<svg class="hero__lines hero__lines--m" viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true" focusable="false"><circle class="hl-dot" style="--g:0" cx="181.0" cy="326.5" r="2.5"/><line class="hl-line" style="--g:0;--len:81.6" x1="180.0" y1="326.0" x2="100.0" y2="310.0"/><circle class="hl-dot" style="--g:1" cx="101.0" cy="497.6" r="2.5"/><line class="hl-line" style="--g:1;--len:59.4" x1="100.2" y1="498.7" x2="69.5" y2="549.5"/><circle class="hl-dot" style="--g:2" cx="316.0" cy="585.3" r="2.5"/><line class="hl-line" style="--g:2;--len:31.3" x1="316.3" y1="587.5" x2="316.5" y2="618.8"/></svg><svg class="hero__lines hero__lines--d" viewBox="0 0 1440 844" preserveAspectRatio="none" aria-hidden="true" focusable="false"><circle class="hl-dot" style="--g:0" cx="741.5" cy="199.5" r="3.5"/><line class="hl-line" style="--g:0;--len:39.9" x1="743.0" y1="199.8" x2="782.8" y2="199.8"/><circle class="hl-dot" style="--g:1" cx="789.5" cy="320.5" r="3.5"/><line class="hl-line" style="--g:1;--len:62.6" x1="789.9" y1="321.7" x2="832.0" y2="368.0"/><circle class="hl-dot" style="--g:2" cx="823.2" cy="664.1" r="3.5"/><line class="hl-line" style="--g:2;--len:39.8" x1="823.3" y1="665.6" x2="825.5" y2="705.3"/></svg>`;
+
 /* ---------- sections ---------- */
 const services = [
-  ["s1", "brows-1.jpg", 888, 594],
-  ["s2", "lips-1.jpg", 218, 208],
-  ["s4", "lashes-1.jpg", 330, 320],
-  ["s5", "brows-2.jpg", 380, 320],
-  ["s3", "face-1.jpg", 675, 1200],
+  ["s1", "svc-pmu-brauen.jpg", 700, 712],            // „Перманент Бровей Маша“
+  ["s2", "svc-pmu-lippen.jpg", 700, 712],            // „Перманент Губ“
+  ["s4", "svc-wimpern-laminierung.jpg", 700, 712],   // „Ламинирование ресниц“
+  ["s5", "svc-brauen-styling.jpg", 700, 712],        // „Оформление бровей“
+  ["s3", "svc-make-up-styling.jpg", 700, 712],       // „Макияж и укладка“
 ];
 const serviceCard = ([k, img, w, h], i) => `
-          <li class="scard" data-reveal style="--i:${i}">
-            <img class="scard__img" src="assets/img/${img}" width="${w}" height="${h}" loading="lazy" decoding="async" ${A("alt", k + ".alt")}>
+          <li class="scard">
+            <div class="scard__media"><img class="scard__img" src="assets/img/${img}?v=${VERSION}" width="${w}" height="${h}" loading="lazy" decoding="async" ${A("alt", k + ".alt")}></div>
             <div class="scard__body">
               ${T("h3", k + ".title", 'class="scard__title"')}
               ${T("p", k + ".text", 'class="scard__text"')}
@@ -85,9 +88,9 @@ const groups = [
               </div>`).join("");
 
 const reviews = [
-  ["r1", "brows-1.jpg", "S"], ["r2", "lips-1.jpg", "?"], ["r3", "lashes-1.jpg", "?"], ["r4", "lips-2.jpg", "?"],
+  ["r1", "rev-pmu-brauen.jpg", "?"], ["r2", "rev-pmu-lippen.jpg", "?"], ["r3", "rev-wimpern.jpg", "?"], ["r4", "rev-brauen-lippen.jpg", "?"],
 ].map(([k, img, ini], i) => `
-          <li class="rcard" data-reveal style="--i:${i}">
+          <li class="rcard">
             <div class="rcard__media"><img src="assets/img/${img}" alt="" loading="lazy" decoding="async">${tag(k + ".tag")}</div>
             <div class="rcard__body">
               <p class="stars" ${A("aria-label", "a11y.stars")}>${icon("star", "ic star")}${icon("star", "ic star")}${icon("star", "ic star")}${icon("star", "ic star")}${icon("star", "ic star")}</p>
@@ -96,21 +99,24 @@ const reviews = [
             </div>
           </li>`).join("");
 
-const tiles = [["i1", "ig-1.jpg"], ["i2", "lips-2.jpg"], ["i3", "ig-3.jpg"], ["i4", "ig-4.jpg"]].map(([k, img], i) => `
+const tiles = [["i1", "ig-pmu-brauen.jpg"], ["i2", "ig-pmu-lippen.jpg"], ["i3", "ig-ergebnis.jpg"], ["i4", "ig-pmu-brauen-mascha.jpg"]].map(([k, img], i) => `
           <li class="tile" data-reveal style="--i:${i}">
             <img src="assets/img/${img}" alt="" loading="lazy" decoding="async">
             <div class="tile__text">${T("p", k + ".q", 'class="tile__q"')}${T("p", k + ".a", 'class="tile__a"')}</div>
           </li>`).join("");
 
-const faqs = [1, 2, 3, 4, 5, 6, 7].map((n) => `
+const faqs = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `
           <li class="acc">
             <h3 class="acc__h"><button class="acc-head" type="button" aria-expanded="false" aria-controls="f${n}-a" id="f${n}-q">${T("span", `f${n}.q`)}<span class="pm" aria-hidden="true"></span></button></h3>
             <div class="collapse" id="f${n}-a" role="region" aria-labelledby="f${n}-q"><div class="collapse__in">${T("p", `f${n}.a`, 'class="acc__a"')}</div></div>
           </li>`).join("");
 
+/* Bewertungen erst zeigen, wenn echte Bewertungen da sind (config.js → showReviews: true) */
+const SHOW_REVIEWS = !!CFG.showReviews;
+const NUM = SHOW_REVIEWS ? { reviews: "07", instagram: "08", faq: "09" } : { instagram: "07", faq: "08" };
 const navItems = [
   ["about", "03", "nav.about"], ["process", "04", "nav.process"], ["services", "05", "nav.services"],
-  ["prices", "06", "nav.prices"], ["reviews", "07", "nav.reviews"], ["instagram", "08", "nav.instagram"], ["faq", "09", "nav.faq"],
+  ["prices", "06", "nav.prices"], ...(SHOW_REVIEWS ? [["reviews", "07", "nav.reviews"]] : []), ["instagram", NUM.instagram, "nav.instagram"], ["faq", NUM.faq, "nav.faq"],
 ];
 const langSwitch = (cls = "") =>
   `<div class="lang ${cls}" role="group" ${A("aria-label", "a11y.lang")}><button type="button" data-lang="de" aria-pressed="true">DE</button><button type="button" data-lang="ru" aria-pressed="false" lang="ru">RU</button></div>`;
@@ -149,7 +155,7 @@ const header = (home = true) => {
   <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menü" hidden data-menu>
     <div class="container menu__top">
       <span class="logo">HANNA · PMU</span>
-      <div class="menu__top-right">${langSwitch()}<button class="icon-btn icon-btn--ring" type="button" data-menu-close ${A("aria-label", "a11y.menuClose")}>${icon("close")}</button></div>
+      <div class="menu__top-right">${langSwitch()}<button class="icon-btn" type="button" data-menu-close ${A("aria-label", "a11y.menuClose")}>${icon("close")}</button></div>
     </div>
     <nav class="container menu__nav" aria-label="Menü">
       ${navItems.map(([id, num, k], i) => `<a class="menu__item" href="${h(id)}" data-spy="${id}" style="--i:${i}"><span class="menu__num">${num}</span>${T("span", k, 'class="menu__label"')}${icon("arrow", "ic menu__arrow")}</a>`).join("")}
@@ -226,6 +232,11 @@ const docHead = (titleKey, descKey, extra = "") => `<!DOCTYPE html>
   <title data-i18n="${titleKey}">${tx(titleKey)}</title>
   <meta name="description" ${A("content", descKey)}>
   <meta name="theme-color" content="#1D1F1E">
+  <meta property="og:type" content="website">
+  <meta property="og:title" ${A("content", titleKey)}>
+  <meta property="og:description" ${A("content", descKey)}>
+  <meta property="og:image" content="assets/img/hero-desktop.jpg">
+  <meta property="og:locale" content="de_DE">
   <script>document.documentElement.classList.add("js")</script>
   <link rel="preload" href="assets/fonts/outfit-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -239,8 +250,8 @@ const scripts = `
   <script src="assets/js/main.js?v=${VERSION}"></script>`;
 
 /* ---------- index.html ---------- */
-const index = `${docHead("meta.title", "meta.description", `<link rel="preload" href="assets/img/hero-mobile.jpg" as="image" media="(max-width: 767px)">
-  <link rel="preload" href="assets/img/hero-desktop.jpg" as="image" media="(min-width: 768px)">`)}
+const index = `${docHead("meta.title", "meta.description", `<link rel="preload" href="assets/img/hero-mobile.jpg?v=${VERSION}c" as="image" media="(max-width: 767px)">
+  <link rel="preload" href="assets/img/hero-desktop.jpg?v=${VERSION}c" as="image" media="(min-width: 768px)">`)}
 <body id="top">
   ${sprite}
   <a class="skip" href="#main" data-i18n="a11y.skip">${tx("a11y.skip")}</a>
@@ -251,12 +262,13 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__art" aria-hidden="true">
         <picture>
-          <source media="(min-width: 768px)" srcset="assets/img/hero-desktop.jpg">
-          <img src="assets/img/hero-mobile.jpg" alt="" fetchpriority="high">
+          <source media="(min-width: 768px)" srcset="assets/img/hero-desktop.jpg?v=${VERSION}c">
+          <img src="assets/img/hero-mobile.jpg?v=${VERSION}c" alt="" fetchpriority="high">
         </picture>
-        <span class="hero__tag hero__tag--1">${tag("hero.tag1", "01")}</span>
-        <span class="hero__tag hero__tag--2">${tag("hero.tag2", "02")}</span>
-        <span class="hero__tag hero__tag--3">${tag("hero.tag3", "03")}</span>
+        ${HERO_LINES}
+        <span class="hero__tag hero__tag--1" style="--g:0">${tag("hero.tag1", "01")}</span>
+        <span class="hero__tag hero__tag--2" style="--g:2">${tag("hero.tag2", "02")}</span>
+        <span class="hero__tag hero__tag--3" style="--g:1">${tag("hero.tag3", "03")}</span>
       </div>
       <div class="container hero__in">
         <div class="hero__top">
@@ -280,8 +292,8 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
         </div>
         ${T("p", "ba.hint", 'class="t-hint ba__hint" data-reveal')}
         <div class="ba" data-ba data-reveal style="--pos:50%">
-          <img class="ba__img" draggable="false" src="assets/img/after.jpg" width="1400" height="1000" loading="lazy" decoding="async" ${A("alt", "ba.altAfter")}>
-          <div class="ba__before"><img class="ba__img" draggable="false" src="assets/img/before.jpg" width="1400" height="1000" loading="lazy" decoding="async" ${A("alt", "ba.altBefore")}></div>
+          <img class="ba__img" draggable="false" src="assets/img/after.jpg?v=${VERSION}b" width="1400" height="1000" loading="lazy" decoding="async" ${A("alt", "ba.altAfter")}>
+          <div class="ba__before"><img class="ba__img" draggable="false" src="assets/img/before.jpg?v=${VERSION}" width="1400" height="1000" loading="lazy" decoding="async" ${A("alt", "ba.altBefore")}></div>
           <span class="ba__tag ba__tag--l">${tag("ba.before")}</span>
           <span class="ba__tag ba__tag--r">${tag("ba.after")}</span>
           <span class="ba__handle" aria-hidden="true"><span class="ba__knob">${icon("handle")}</span></span>
@@ -341,7 +353,7 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
           </div>
         </div>
       </div>
-      <div class="carousel" data-carousel="services">
+      <div class="carousel" data-carousel="services" data-reveal>
         <ul class="carousel__track scards">${services.map(serviceCard).join("")}
         </ul>
       </div>
@@ -367,14 +379,14 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
         <div class="prices__know" data-reveal>
           ${T("h3", "prices.know", 'class="t-eyebrow know__label"')}
           <ul class="know">
-            ${[1, 2, 3].map((n) => `<li>${T("p", `prices.k${n}t`, 'class="know__t"')}${T("p", `prices.k${n}`, 'class="know__p"')}</li>`).join("")}
+            ${[1, 2, 3, 4].map((n) => `<li>${T("p", `prices.k${n}t`, 'class="know__t"')}${T("p", `prices.k${n}`, 'class="know__p"')}</li>`).join("")}
           </ul>
         </div>
         <div class="prices__cta" data-reveal>${ctaPair("cta.book", "light", { msg: "wa.message", full: true })}</div>
       </div>
     </section>
 
-    <!-- 07 BEWERTUNGEN -->
+    ${SHOW_REVIEWS ? `    <!-- 07 BEWERTUNGEN -->
     <section class="sec sec--surface" id="reviews" aria-labelledby="reviews-title">
       <div class="container">
         <div class="sec-top">
@@ -386,7 +398,7 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
           <p class="rating" data-reveal>${T("strong", "reviews.score", 'class="rating__score"')}${icon("star", "ic star")}${T("span", "reviews.count", 'class="rating__count"')}</p>
         </div>
       </div>
-      <div class="carousel carousel--reviews" data-carousel="reviews">
+      <div class="carousel carousel--reviews" data-carousel="reviews" data-reveal>
         <ul class="carousel__track rcards">${reviews}
         </ul>
       </div>
@@ -399,13 +411,14 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
       </div>
       <div class="container"><a class="tlink tlink--on-light" href="${esc(CFG.googleReviewsUrl)}" target="_blank" rel="noopener" data-google>${T("span", "reviews.google")}${icon("ext")}</a></div>
     </section>
+` : ""}
 
     <!-- 08 INSTAGRAM -->
     <section class="sec sec--dark" id="instagram" aria-labelledby="insta-title">
       <div class="container">
         <div class="sec-top">
           <div class="sec-head" data-reveal>
-            <p class="eyebrow"><span class="eyebrow__num">08</span><span class="eyebrow__line" aria-hidden="true"></span>${T("span", "insta.eyebrow")}</p>
+            <p class="eyebrow"><span class="eyebrow__num">${NUM.instagram}</span><span class="eyebrow__line" aria-hidden="true"></span>${T("span", "insta.eyebrow")}</p>
             ${T("h2", "insta.title", 'class="t-h2" id="insta-title"')}
             ${T("p", "insta.text", 'class="t-sub"')}
           </div>
@@ -422,7 +435,7 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
       <div class="container faq">
         <div class="faq__info">
         <div class="faq__head sec-head" data-reveal>
-          <p class="eyebrow"><span class="eyebrow__num">09</span><span class="eyebrow__line" aria-hidden="true"></span>${T("span", "faq.eyebrow")}</p>
+          <p class="eyebrow"><span class="eyebrow__num">${NUM.faq}</span><span class="eyebrow__line" aria-hidden="true"></span>${T("span", "faq.eyebrow")}</p>
           ${T("h2", "faq.title", 'class="t-h2" id="faq-title"')}
         </div>
         <div class="faq__more" data-reveal>
@@ -441,6 +454,9 @@ const index = `${docHead("meta.title", "meta.description", `<link rel="preload" 
   </main>
 
   ${footer(true)}
+
+  <!-- Schwebender WhatsApp-Button (nur Smartphone/Tablet) -->
+  <a class="fab-wa" href="${waHref}" target="_blank" rel="noopener" data-wa data-wa-msg="wa.message" data-fab ${A("aria-label", "fab.label")}>${icon("wa")}</a>
   ${scripts}
 </body>
 </html>
@@ -456,6 +472,8 @@ const legal = (file, titleKey, leadKey, todoKey) => `${docHead(titleKey, "meta.d
       <a class="tlink tlink--on-light legal__back" href="index.html">${icon("arrow-l")}${T("span", "legal.back")}</a>
       ${T("h1", titleKey, 'class="t-h2"')}
       ${T("p", leadKey, 'class="t-lead"')}
+      ${file === "impressum.html" ? `<address class="legal__addr">${T("span", "imp.name")}<br>${T("span", "imp.street")}<br>${T("span", "imp.city")}</address>
+      ${T("p", "imp.contact")}` : ""}
       ${T("p", todoKey, 'class="legal__todo"')}
     </div>
   </main>
